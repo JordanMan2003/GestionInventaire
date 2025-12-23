@@ -103,9 +103,9 @@ sudo mysql -u root -p
 ```
 
 ```sql
-CREATE DATABASE stockez;
-CREATE USER 'stockez_user'@'localhost' IDENTIFIED BY 'motdepasse';
-GRANT ALL PRIVILEGES ON stockez.* TO 'stockez_user'@'localhost';
+CREATE DATABASE InventoryDB;
+CREATE USER 'manoel_user'@'localhost' IDENTIFIED BY 'manoel12345';
+GRANT ALL PRIVILEGES ON InventoryDB.* TO 'manoel_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
 ```
