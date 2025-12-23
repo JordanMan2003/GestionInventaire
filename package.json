@@ -1,15 +1,21 @@
 {
   "name": "gestioninventaire",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "API de gestion d'inventaire (StockEZ)",
+  "main": "dist/index.js",
   "type": "commonjs",
+  "license": "ISC",
+
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push"
+  },
+
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -19,6 +25,7 @@
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.16.0"
   },
+
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
