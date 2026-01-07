@@ -1,0 +1,146 @@
+openapi: 3.0.0
+
+info:
+  title: Pirates API
+  description: API pour la gestion des navires de pirates
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3001
+    description: Serveur de développement
+  - url: http://edwrdlmanoel.me
+    description: Serveur de production
+
+paths:
+  /api/auth/register:
+    post:
+      summary: Créer un nouveau compte utilisateur
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  minLength: 2
+                  maxLength: 50
+                password:
+                  type: string
+                  minLength: 6
+            example:
+              username: capitaine_jack
+              password: motdepasse123
+      responses:
+        "201":
+          description: Utilisateur créé avec succès
+          content:
+            application/json:
+              example:
+                message: Utilisateur créé avec succès
+                user:
+                  id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  username: capitaine_jack
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        "400":
+          description: Données invalides
+          content:
+            application/json:
+              example:
+                message: Username doit avoir entre 2 et 50 caractères
+        "409":
+          description: Utilisateur déjà existant
+          content:
+            application/json:
+              example:
+                message: Utilisateur déjà existant
+
+  /api/auth/login:
+    post:
+      summary: Se connecter avec un compte existant
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+            example:
+              username: manoel
+              password: manoel
+      responses:
+        "200":
+          description: Connexion réussie
+          content:
+            application/json:
+              example:
+                message: Connexion réussie
+                user:
+                  id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  username: manoel
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        "401":
+          description: Identifiants invalides
+          content:
+            application/json:
+              example:
+                message: Identifiants invalides
+
+  /api/auth/logout:
+    post:
+      summary: Se déconnecter de l'application
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Déconnexion réussie
+          content:
+            application/json:
+              example:
+                message: Logged out
+        "401":
+          description: Non autorisé
+          content:
+            application/json:
+              example:
+                message: Non autorisé
+
+  /api/auth/me:
+    get:
+      summary: Obtenir les informations de l'utilisateur connecté
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Informations de l'utilisateur
+          content:
+            application/json:
+              example:
+                user:
+                  id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  username: manoel
+        "401":
+          description: Non autorisé
+          content:
+            application/json:
+              example:
+                message: Non autorisé
