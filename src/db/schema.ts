@@ -16,12 +16,13 @@ export const users = mysqlTable("users", {
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
-export const Products = mysqlTable("products", {
+export const products = mysqlTable("products", {
   id: varchar("id", { length: 36 }).primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  description: varchar("description", { length: 1000 }).notNull(),
   quantity: int("quantity").notNull(),
   minQuantity: int("min_quantity").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   userId: varchar("user_id", { length: 36 })
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
