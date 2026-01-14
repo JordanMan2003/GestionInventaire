@@ -9,5 +9,12 @@ export const createProductRoutes = (): Router => {
   router.get("/:id", authMiddleware, productController.getProductById);
   router.get("/", authMiddleware, productController.getAllProductsByUserId);
   router.post("/", authMiddleware, productController.createProduct);
+  router.put("/:id", authMiddleware, productController.updateProduct);
+  router.delete("/:id", authMiddleware, productController.deleteProduct);
+  router.delete(
+    "/",
+    authMiddleware,
+    productController.deleteAllProductsByUserId
+  );
   return router;
 };

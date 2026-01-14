@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { ProductService } from "../services/product.services";
 import { randomUUID } from "crypto";
-import { CreateProductRequest } from "../types/products.types";
+import {
+  CreateProductRequest,
+  UpdateProductRequest,
+} from "../types/products.types";
+import { Update } from "drizzle-orm";
 
 const productService = new ProductService();
 export class ProductController {
@@ -50,6 +54,55 @@ export class ProductController {
         userId,
       });
       res.status(201).json(newProduct);
+    } catch (error) {
+      next(error);
+    }
+  };
+  updateProduct = async (req: Request, res: Response, next: NextFunction) => {
+    const updateProductData: UpdateProductRequest = req.body;
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+      const updatedProduct = await productService.updateProduct(
+        req.params.id,
+        userId,
+        updateProductData
+      );
+      res.status(200).json(updatedProduct);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+      await productService.deleteProduct(req.params.id, userId);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
+  deleteAllProductsByUserId = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+      await productService.deleteAllProductsByUserId(userId);
+      res.status(204).send();
     } catch (error) {
       next(error);
     }
