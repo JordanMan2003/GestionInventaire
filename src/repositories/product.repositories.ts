@@ -1,6 +1,10 @@
-import { eq } from "drizzle-orm";
+import { eq, and, Update } from "drizzle-orm";
 import { db } from "../db/connection";
-import { CreateProductRequest, Product } from "../types/products.types";
+import {
+  CreateProductRequest,
+  Product,
+  UpdateProductRequest,
+} from "../types/products.types";
 import { products } from "../db/schema";
 
 export class ProductRepository {
@@ -43,6 +47,33 @@ export class ProductRepository {
     }
     return createdProduct;
   }
-
-  // Repository methods would go here
+  async updateProduct(
+    id: string,
+    userId: string,
+    updatedData: Partial<UpdateProductRequest>
+  ): Promise<Product> {
+    await db
+      .update(products)
+      .set({
+        name: updatedData.name,
+        description: updatedData.description,
+        price: updatedData.price ? updatedData.price.toString() : undefined,
+        quantity: updatedData.quantity,
+        minQuantity: updatedData.minQuantity,
+      })
+      .where(and(eq(products.id, id), eq(products.userId, userId)));
+    const updatedProduct = await this.findById(id);
+    if (!updatedProduct) {
+      throw new Error("Failed to update product");
+    }
+    return updatedProduct;
+  }
+  async deleteProduct(id: string, userId: string): Promise<void> {
+    await db
+      .delete(products)
+      .where(and(eq(products.id, id), eq(products.userId, userId)));
+  }
+  async deleteAllProductsByUserId(userId: string): Promise<void> {
+    await db.delete(products).where(eq(products.userId, userId));
+  }
 }

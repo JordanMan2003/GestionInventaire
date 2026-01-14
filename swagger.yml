@@ -11,6 +11,10 @@ servers:
   - url: http://edwrdlmanoel.me
     description: Serveur de production
 
+tags:
+  - name: Authentication
+  - name: Products
+
 paths:
   /api/auth/register:
     post:
@@ -26,14 +30,6 @@ paths:
               required:
                 - username
                 - password
-              properties:
-                username:
-                  type: string
-                  minLength: 2
-                  maxLength: 50
-                password:
-                  type: string
-                  minLength: 6
             example:
               username: capitaine_jack
               password: motdepasse123
@@ -149,3 +145,123 @@ paths:
           description: Données invalides
         "401":
           description: Non autorisé
+
+    delete:
+      summary: Supprimer tous les produits de l'utilisateur connecté
+      tags:
+        - Products
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Tous les produits ont été supprimés
+        "401":
+          description: Non autorisé
+
+  /api/products/{id}:
+    get:
+      summary: Récupérer un produit par son ID
+      tags:
+        - Products
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du produit
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Produit trouvé
+        "401":
+          description: Non autorisé
+        "404":
+          description: Produit non trouvé
+
+    put:
+      summary: Mettre à jour un produit existant
+      tags:
+        - Products
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du produit à modifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - description
+                - quantity
+                - minQuantity
+                - price
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                description:
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+                quantity:
+                  type: integer
+                minQuantity:
+                  type: integer
+                price:
+                  type: number
+                  format: float
+            example:
+              name: Bouteille de rhum premium
+              description: Une bouteille de rhum des Caraïbes, édition premium.
+              quantity: 15
+              minQuantity: 3
+              price: 29.99
+      responses:
+        "200":
+          description: Produit mis à jour avec succès
+        "400":
+          description: Données invalides
+        "401":
+          description: Non autorisé
+        "404":
+          description: Produit non trouvé
+
+    delete:
+      summary: Supprimer un produit existant
+      tags:
+        - Products
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du produit à supprimer
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Produit supprimé avec succès
+        "401":
+          description: Non autorisé
+        "404":
+          description: Produit non trouvé
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: authToken
+      description: Authentification via cookie `authToken`

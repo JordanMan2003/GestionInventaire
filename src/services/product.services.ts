@@ -1,5 +1,9 @@
+import { Update } from "drizzle-orm";
 import { ProductRepository } from "../repositories/product.repositories";
-import { CreateProductRequest } from "../types/products.types";
+import {
+  CreateProductRequest,
+  UpdateProductRequest,
+} from "../types/products.types";
 
 const productRepository = new ProductRepository();
 export class ProductService {
@@ -27,5 +31,35 @@ export class ProductService {
     const newProduct = productRepository.createProduct(productData);
 
     return newProduct;
+  }
+  async updateProduct(
+    id: string,
+    userId: string,
+    updatedData: Partial<UpdateProductRequest>
+  ) {
+    const existingProduct = await productRepository.findById(id);
+    if (!existingProduct || existingProduct.userId !== userId) {
+      throw new Error("Product not found or unauthorized");
+    }
+    const updatedProduct = await productRepository.updateProduct(
+      id,
+      userId,
+      updatedData
+    );
+    return updatedProduct;
+  }
+  async deleteProduct(id: string, userId: string) {
+    const existingProduct = await productRepository.findById(id);
+    if (!existingProduct || existingProduct.userId !== userId) {
+      throw new Error("Product not found or unauthorized");
+    }
+    await productRepository.deleteProduct(id, userId);
+  }
+  async deleteAllProductsByUserId(userId: string) {
+    const products = await productRepository.getAllProductsByUserId(userId);
+    if (products.length === 0) {
+      throw new Error("No products found for this user");
+    }
+    await productRepository.deleteAllProductsByUserId(userId);
   }
 }
